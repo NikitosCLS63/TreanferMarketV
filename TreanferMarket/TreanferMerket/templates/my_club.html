@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title_name %}Мой клуб{% endblock %}
+
+{% block content %}
+<div class="container my-club-page">
+    <h2>Мой клуб</h2>
+    <section class="my-owned-cards">
+        <h3>Мои карты</h3>
+        <div class="card-grid">
+            {% for player in owned_players %}
+            <div class="player-card">
+                <div class="card-header">
+                    <span class="player-rating">{{ player.overall_rating }}</span>
+                    <span class="player-position">{{ player.position.code }}</span>
+                    <img src="{% if player.player_flag_image %}{{ player.player_flag_image.url }}{% else %}{{ player.nation.flag_image_url }}{% endif %}" alt="{{ player.nation.name }} Flag" class="player-flag">
+                    <img src="{% if player.player_club_logo_image %}{{ player.player_club_logo_image.url }}{% else %}{{ player.club.logo_url }}{% endif %}" alt="{{ player.club.name }} Logo" class="player-club">
+                </div>
+                <img src="{% if player.image_file %}{{ player.image_file.url }}{% else %}{{ player.image_url }}{% endif %}" alt="{{ player.name }}" class="player-photo">
+                <h3 class="player-name">{{ player.name }}</h3>
+                <div class="player-stats">
+                    <ul>
+                        <li><strong>{{ player.stats.pace }}</strong> PAC</li>
+                        <li><strong>{{ player.stats.shooting }}</strong> SHO</li>
+                        <li><strong>{{ player.stats.passing }}</strong> PAS</li>
+                        <li><strong>{{ player.stats.dribbling }}</strong> DRI</li>
+                        <li><strong>{{ player.stats.defending }}</strong> DEF</li>
+                        <li><strong>{{ player.stats.physicality }}</strong> PHY</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="price">{{ player.base_price }}</span>
+                    <a href="{% url 'sell_player' player.id %}" class="btn btn-secondary">Продать</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>У вас пока нет карт в клубе.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="my-created-cards">
+        <h3>Созданные мной карты</h3>
+        <div class="card-grid">
+            {% for player in created_players %}
+            <div class="player-card">
+                <div class="card-header">
+                    <span class="player-rating">{{ player.overall_rating }}</span>
+                    <span class="player-position">{{ player.position.code }}</span>
+                    <img src="{% if player.player_flag_image %}{{ player.player_flag_image.url }}{% else %}{{ player.nation.flag_image_url }}{% endif %}" alt="{{ player.nation.name }} Flag" class="player-flag">
+                    <img src="{% if player.player_club_logo_image %}{{ player.player_club_logo_image.url }}{% else %}{{ player.club.logo_url }}{% endif %}" alt="{{ player.club.name }} Logo" class="player-club">
+                </div>
+                <img src="{% if player.image_file %}{{ player.image_file.url }}{% else %}{{ player.image_url }}{% endif %}" alt="{{ player.name }}" class="player-photo">
+                <h3 class="player-name">{{ player.name }}</h3>
+                <div class="player-stats">
+                    <ul>
+                        <li><strong>{{ player.stats.pace }}</strong> PAC</li>
+                        <li><strong>{{ player.stats.shooting }}</strong> SHO</li>
+                        <li><strong>{{ player.stats.passing }}</strong> PAS</li>
+                        <li><strong>{{ player.stats.dribbling }}</strong> DRI</li>
+                        <li><strong>{{ player.stats.defending }}</strong> DEF</li>
+                        <li><strong>{{ player.stats.physicality }}</strong> PHY</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="price">{{ player.base_price }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <p>Вы пока не создали ни одной карты.</p>
+            {% endfor %}
+        </div>
+    </section>
+    <div class="back-to-home-btn">
+        <a href="{% url 'info_view' %}" class="btn btn-secondary">На главную</a>
+    </div>
+</div>
+{% endblock %}

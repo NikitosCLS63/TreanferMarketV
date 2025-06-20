@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title_name %}Трансферный рынок{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Трансферный рынок</h2>
+    <section class="market-section">
+        <div class="market-layout">
+            <div class="filters">
+                <h3>Фильтры</h3>
+                <div class="filter-group">
+                    <label for="search-player">Имя игрока:</label>
+                    <input type="text" id="search-player" placeholder="Найти игрока...">
+                </div>
+                <div class="filter-group">
+                    <label for="min-rating">Мин. рейтинг:</label>
+                    <input type="number" id="min-rating" min="0" max="99">
+                </div>
+                <div class="filter-group">
+                    <label for="position">Позиция:</label>
+                    <select id="position">
+                        <option value="">Любая</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary full-width" id="applyFiltersBtn">Применить фильтры</button>
+            </div>
+            <div class="player-grid-container">
+                {% if listings %}
+                <div class="card-grid" id="cardGrid">
+                    {% for listing in listings %}
+                    <div class="player-card">
+                        <div class="card-header">
+                            <span class="player-rating">{{ listing.player.overall_rating }}</span>
+                            <span class="player-position">{{ listing.player.position.code }}</span>
+                            <img src="{% if listing.player.player_flag_image %}{{ listing.player.player_flag_image.url }}{% else %}{{ listing.player.nation.flag_image_url }}{% endif %}" alt="{{ listing.player.nation.name }} Flag" class="player-flag">
+                            <img src="{% if listing.player.player_club_logo_image %}{{ listing.player.player_club_logo_image.url }}{% else %}{{ listing.player.club.logo_url }}{% endif %}" alt="{{ listing.player.club.name }} Logo" class="player-club">
+                        </div>
+                        <img src="{% if listing.player.image_file %}{{ listing.player.image_file.url }}{% else %}{{ listing.player.image_url }}{% endif %}" alt="{{ listing.player.name }}" class="player-photo">
+                        <h3 class="player-name">{{ listing.player.name }}</h3>
+                        <div class="player-stats">
+                            <ul>
+                                <li><strong>{{ listing.player.stats.pace }}</strong> PAC</li>
+                                <li><strong>{{ listing.player.stats.shooting }}</strong> SHO</li>
+                                <li><strong>{{ listing.player.stats.passing }}</strong> PAS</li>
+                                <li><strong>{{ listing.player.stats.dribbling }}</strong> DRI</li>
+                                <li><strong>{{ listing.player.stats.defending }}</strong> DEF</li>
+                                <li><strong>{{ listing.player.stats.physicality }}</strong> PHY</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="price">{{ listing.buy_now_price }}</span>
+                            <div class="purchase-info">
+                                <span class="purchase-count">Куплено: {{ listing.player.purchase_count }}</span>
+                                <form class="buy-player-form" data-listing-id="{{ listing.id }}" action="{% url 'buy_player' listing.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="button" class="btn btn-buy open-modal-btn">Купить</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>Нет игроков для отображения.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    
+</div>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+
+
+// --- Получение и отображение игроков (AJAX-фильтрация) ---
+function fetchAndRenderListings() {
+    let queryParams = [];
+    if (searchPlayerInput.value) queryParams.push('player_name=' + encodeURIComponent(searchPlayerInput.value));
+    if (minRatingInput.value) queryParams.push('min_rating=' + encodeURIComponent(minRatingInput.value));
+    if (positionSelect.value) queryParams.push('position=' + encodeURIComponent(positionSelect.value));
+    const url = '/api/transferlistings/' + (queryParams.length ? '?' + queryParams.join('&') : '');
+    fetch(url)
+        .then(r => r.json())
+        .then(data => {
+            const listings = data.results || data;
+            cardGrid.innerHTML = '';
+            if (listings.length > 0) {
+                listings.forEach(listing => {
+                    const card = document.createElement('div');
+                    card.className = 'player-card';
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <span class="player-rating">${listing.player.overall_rating}</span>
+                            <span class="player-position">${listing.player.position.code}</span>
+                            <img src="${listing.player.player_flag_image || listing.player.nation.flag_image_url}" alt="${listing.player.nation.name} Flag" class="player-flag">
+                            <img src="${listing.player.player_club_logo_image || listing.player.club.logo_url}" alt="${listing.player.club.name} Logo" class="player-club">
+                        </div>
+                        <img src="${listing.player.image_file || listing.player.image_url}" alt="${listing.player.name}" class="player-photo">
+                        <h3 class="player-name">${listing.player.name}</h3>
+                        <div class="player-stats">
+                            <ul>
+                                <li><strong>${listing.player.stats.pace}</strong> PAC</li>
+                                <li><strong>${listing.player.stats.shooting}</strong> SHO</li>
+                                <li><strong>${listing.player.stats.passing}</strong> PAS</li>
+                                <li><strong>${listing.player.stats.dribbling}</strong> DRI</li>
+                                <li><strong>${listing.player.stats.defending}</strong> DEF</li>
+                                <li><strong>${listing.player.stats.physicality}</strong> PHY</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="price">${listing.buy_now_price}</span>
+                            <div class="purchase-info">
+                                <span class="purchase-count">Куплено: ${listing.player.purchase_count}</span>
+                                <form class="buy-player-form" data-listing-id="${listing.id}" action="/buy_player/${listing.id}/" method="post">
+                                    <button type="button" class="btn btn-buy open-modal-btn">Купить</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                    card.querySelector('.open-modal-btn').onclick = openModalHandler;
+                    cardGrid.appendChild(card);
+                });
+                noListingsMessage.style.display = 'none';
+            } else {
+                cardGrid.innerHTML = '';
+                noListingsMessage.style.display = 'block';
+            }
+        })
+        .catch(() => {
+            cardGrid.innerHTML = '';
+            noListingsMessage.textContent = 'Произошла ошибка при загрузке предложений.';
+            noListingsMessage.style.display = 'block';
+        });
+}
+
+
+// --- Инициализация ---
+populatePositionsFilter();
+applyFiltersBtn.onclick = fetchAndRenderListings;
+</script>
+{% endblock %} 

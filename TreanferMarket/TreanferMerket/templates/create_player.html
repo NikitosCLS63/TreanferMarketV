@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title_name %}Создать игрока{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/create_player.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Создать свою карту игрока</h2>
+    <form id="createPlayerForm" method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Имя игрока:</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <p class="error">{{ form.name.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.position.id_for_label }}">Позиция:</label>
+            {{ form.position }}
+            {% if form.position.errors %}
+                <p class="error">{{ form.position.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.overall_rating.id_for_label }}">Общий рейтинг:</label>
+            {{ form.overall_rating }}
+            {% if form.overall_rating.errors %}
+                <p class="error">{{ form.overall_rating.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.base_price.id_for_label }}">Базовая цена:</label> 
+            {{ form.base_price }}
+            {% if form.base_price.errors %}
+                <p class="error">{{ form.base_price.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.rare.id_for_label }}">Редкий игрок:</label>
+            {{ form.rare }}
+            {% if form.rare.errors %}
+                <p class="error">{{ form.rare.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.image_file.id_for_label }}">Фото игрока:</label>
+            {{ form.image_file }}
+            {% if form.image_file.errors %}
+                <p class="error">{{ form.image_file.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.player_flag_image.id_for_label }}">Загрузить флаг:</label>
+            {{ form.player_flag_image }}
+            {% if form.player_flag_image.errors %}
+                <p class="error">{{ form.player_flag_image.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.player_club_logo_image.id_for_label }}">Загрузить логотип клуба:</label>
+            {{ form.player_club_logo_image }}
+            {% if form.player_club_logo_image.errors %}
+                <p class="error">{{ form.player_club_logo_image.errors }}</p>
+            {% endif %}
+        </div>
+        <h3>Характеристики</h3>
+        <div class="form-group">
+            <label for="{{ form.pace.id_for_label }}">Скорость:</label>
+            {{ form.pace }}
+            {% if form.pace.errors %}
+                <p class="error">{{ form.pace.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.shooting.id_for_label }}">Удары:</label>
+            {{ form.shooting }}
+            {% if form.shooting.errors %}
+                <p class="error">{{ form.shooting.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.passing.id_for_label }}">Передачи:</label>
+            {{ form.passing }}
+            {% if form.passing.errors %}
+                <p class="error">{{ form.passing.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.dribbling.id_for_label }}">Дриблинг:</label>
+            {{ form.dribbling }}
+            {% if form.dribbling.errors %}
+                <p class="error">{{ form.dribbling.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.defending.id_for_label }}">Защита:</label>
+            {{ form.defending }}
+            {% if form.defending.errors %}
+                <p class="error">{{ form.defending.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.physicality.id_for_label }}">Физика:</label>
+            {{ form.physicality }}
+            {% if form.physicality.errors %}
+                <p class="error">{{ form.physicality.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.weak_foot.id_for_label }}">Слабая нога:</label>
+            {{ form.weak_foot }}
+            {% if form.weak_foot.errors %}
+                <p class="error">{{ form.weak_foot.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.skill_moves.id_for_label }}">Финты:</label>
+            {{ form.skill_moves }}
+            {% if form.skill_moves.errors %}
+                <p class="error">{{ form.skill_moves.errors }}</p>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Создать</button>
+        <a href="{% url 'info_view' %}" class="btn btn-secondary">На главную</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const createPlayerForm = document.getElementById('createPlayerForm');
+
+        if (createPlayerForm) {
+            createPlayerForm.addEventListener('submit', async function(event) {
+                event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+                const formData = new FormData(createPlayerForm);
+                
+                // Для отладки: выведите содержимое FormData
+                // for (let [key, value] of formData.entries()) {
+                //     console.log(`${key}: ${value}`);
+                // }
+
+                try {
+                    const response = await fetch('/api/players/', {
+                        method: 'POST',
+                        // При использовании FormData, браузер сам устанавливает 'Content-Type': 'multipart/form-data',
+                        // поэтому не нужно устанавливать его вручную.
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'), // Убедитесь, что эта функция существует
+                            'Authorization': `Token ${localStorage.getItem('token')}` // Добавляем токен для авторизации
+                        },
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert('Игрок успешно создан!');
+                        // Можно перенаправить пользователя или обновить страницу
+                        window.location.href = '/my-club/'; 
+                    } else {
+                        // Обработка ошибок валидации API
+                        let errorMessage = 'Ошибка при создании игрока.';
+                        if (data) {
+                            errorMessage += '\n' + JSON.stringify(data, null, 2);
+                        }
+                        alert(errorMessage);
+                    }
+                } catch (error) {
+                    console.error('Ошибка сети или сервера:', error);
+                    alert('Произошла ошибка при отправке данных.');
+                }
+            });
+        }
+    });
+
+    // Функция для получения CSRF токена из куки
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

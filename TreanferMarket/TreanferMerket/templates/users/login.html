@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title_name %}Вход{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Вход</h2>
+        <form id="loginForm" method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="error">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.name == 'password' %}
+                        <div class="password-wrapper">
+                            {{ field.as_widget }}
+                            <span class="toggle-password" onclick="togglePassword(this)">🙂</span>
+                        </div>
+                    {% else %}
+                        {{ field.as_widget }}
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-secondary">Войти</button>
+            <a href="{% url 'info_view' %}" class="back-button">← Назад на главную</a>
+        </form>
+    </div>
+
+    {% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function(event) {
+                    event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+                    const formData = new FormData(loginForm);
+                    const data = {};
+                    formData.forEach((value, key) => {
+                        data[key] = value;
+                    });
+
+                    try {
+                        const response = await fetch('/api/login/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken'),
+                            },
+                            body: JSON.stringify(data),
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            alert('Вход выполнен успешно!');
+                            localStorage.setItem('token', result.token); 
+                            localStorage.setItem('user_coins', result.coins); 
+                            window.location.href = '/my-club/'; 
+                        } else {
+                            let errorMessage = 'Ошибка входа.';
+                            if (result) {
+                                errorMessage += '\n' + JSON.stringify(result, null, 2);
+                            }
+                            alert(errorMessage);
+                        }
+                    } catch (error) {
+                        console.error('Ошибка сети или сервера:', error);
+                        alert('Произошла ошибка при отправке данных.');
+                    }
+                });
+            }
+        });
+
+        function togglePassword(el) {
+            const input = el.previousElementSibling;
+            const type = input.getAttribute("type") === "password" ? "text" : "password";
+            input.setAttribute("type", type);
+            el.textContent = type === "password" ? "🙂" : "🫣";
+        }
+
+        // Функция для получения CSRF токена из куки
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    {% endblock %}
+{% endblock %}

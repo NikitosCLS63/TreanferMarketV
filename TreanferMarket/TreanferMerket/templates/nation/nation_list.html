@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Список стран — Трансфер Маркет{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="section-title">Страны</h1>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Флаг</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for nation in nations %}
+          <tr>
+            <td>{{ nation.id }}</td>
+            <td>{{ nation.name }}</td>
+            <td>
+              {% if nation.flag_image_url %}
+                <img src="{{ nation.flag_image_url }}" alt="{{ nation.name }}" class="flag-thumb">
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'nation_detail_view' nation.id %}" class="btn btn-secondary btn-sm">Просмотр</a>
+              <a href="{% url 'nation_update_view' nation.id %}" class="btn btn-primary btn-sm">Редактировать</a>
+              <a href="{% url 'nation_delete_view' nation.id %}" class="btn btn-secondary btn-sm">Удалить</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4">Нет стран для отображения.</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-20">
+      <a href="{% url 'nation_create_view' %}" class="btn btn-primary">Добавить страну</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+.table-responsive { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 12px 15px; border-bottom: 1px solid #333; text-align: left; }
+.table th { background-color: #222; }
+.flag-thumb { width: 32px; height: auto; border-radius: 3px; }
+.section-title { font-size: 32px; margin-bottom: 20px; color: var(--primary-color); }
+.mt-20 { margin-top: 20px; }
+</style>
+{% endblock %}

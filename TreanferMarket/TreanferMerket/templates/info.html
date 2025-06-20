@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title_name %}Главная{% endblock %}
+
+{% block content %}
+    <main>
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <h1>ТРАНСФЕР МАРКЕТ FC25</h1>
+                <p class="subtitle">Ваша команда мечты начинается здесь</p>
+                <!-- <form class="search-form">
+                    <input type="text" placeholder="Найти игрока по имени...">
+                    <button type="submit" class="btn btn-primary">Найти</button>
+                </form> -->
+            </div>
+        </section>
+
+        <section class="promo-cards">
+            <div class="container">
+                <h2>Горячие предложения</h2>
+                <div class="card-grid">
+                    {% if hot_offers %}
+                    {% for listing in hot_offers %}
+                    <div class="player-card special-offer">
+                        <div class="card-header">
+                            <span class="player-rating">{{ listing.player.overall_rating }}</span>
+                            <span class="player-position">{{ listing.player.position.code }}</span>
+                            <img src="{% if listing.player.player_flag_image %}{{ listing.player.player_flag_image.url }}{% else %}{{ listing.player.nation.flag_image_url }}{% endif %}"
+                                alt="{{ listing.player.nation.name }} Flag" class="player-flag">
+                            <img src="{% if listing.player.player_club_logo_image %}{{ listing.player.player_club_logo_image.url }}{% else %}{{ listing.player.club.logo_url }}{% endif %}" alt="{{ listing.player.club.name }} Logo"
+                                class="player-club">
+                        </div>
+                        <img src="{% if listing.player.image_file %}{{ listing.player.image_file.url }}{% else %}{{ listing.player.image_url }}{% endif %}"
+                            alt="{{ listing.player.name }}" class="player-photo">
+                        <h3 class="player-name">{{ listing.player.name }}</h3>
+                        <div class="player-stats">
+                            <ul>
+                                <li><strong>{{ listing.player.stats.pace }}</strong> PAC</li>
+                                <li><strong>{{ listing.player.stats.shooting }}</strong> SHO</li>
+                                <li><strong>{{ listing.player.stats.passing }}</strong> PAS</li>
+                                <li><strong>{{ listing.player.stats.dribbling }}</strong> DRI</li>
+                                <li><strong>{{ listing.player.stats.defending }}</strong> DEF</li>
+                                <li><strong>{{ listing.player.stats.physicality }}</strong> PHY</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="price">{{ listing.buy_now_price }}</span>
+                            <a href="{% url 'buy_player' listing.id %}" class="btn btn-buy">Купить</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    
+                    <div class="player-card special-offer">
+                        <div class="card-header">
+                            <span class="player-rating">91</span>
+                            <span class="player-position">ST</span>
+                            <img src="{% static 'css/images/France_flag.png' %}" alt="France Flag" class="player-flag">
+                            <img src="{% static 'css/images/Real_logo.png' %}" alt="Real Madrid Logo"
+                                class="player-club">
+                        </div>
+                        <img src="{% static 'css/images/Kylian_mbappe.png' %}" alt="Kylian Mbappé" class="player-photo">
+                        <h3 class="player-name">KYLIAN MBAPPÉ</h3>
+                        <div class="player-stats">
+                            <ul>
+                                <li><strong>97</strong> PAC</li>
+                                <li><strong>90</strong> SHO</li>
+                                <li><strong>80</strong> PAS</li>
+                                <li><strong>92</strong> DRI</li>
+                                <li><strong>39</strong> DEF</li>
+                                <li><strong>78</strong> PHY</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="price">1,500,000</span>
+                            <a href="#" class="btn btn-buy">Купить</a>
+                        </div>
+                    </div>
+                    
+                    <div class="player-card special-offer">
+                        <div class="card-header">
+                            <span class="player-rating">97</span>
+                            <span class="player-position">RW</span>
+                            <img src="{% static 'css/images/flag-spain.webp' %}" alt="Spain Flag" class="player-flag">
+                            <img src="{% static 'css/images/barca_logo.png' %}" alt="Barcelona Logo"
+                                class="player-club">
+                        </div>
+                        <img src="{% static 'css/images/yamals.webp' %}" alt="LAMINE YAMAL" class="player-photo">
+                        <h3 class="player-name">LAMINE YAMAL</h3>
+                        <div class="player-stats">
+                            <ul>
+                                <li><strong>98</strong> PAC</li>
+                                <li><strong>95</strong> SHO</li>
+                                <li><strong>97</strong> PAS</li>
+                                <li><strong>97</strong> DRI</li>
+                                <li><strong>43</strong> DEF</li>
+                                <li><strong>90</strong> PHY</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="price">2,794,000</span>
+                            <a href="#" class="btn btn-buy">Купить</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="market-section">
+            <div class="container market-layout">
+                <aside class="filters">
+                    <h3>Фильтры</h3>
+                    <div class="filter-group">
+                        <label for="price-range">Цена:</label>
+                        <input type="range" id="price-range" name="price-range" min="0" max="15000000">
+                    </div>
+                    <div class="filter-group">
+                        <label for="league">Лига:</label>
+                        <select id="league" name="league">
+                            <option value="">Любая</option>
+                            <option value="epl">Premier League</option>
+                            <option value="laliga">LaLiga</option>
+                            <option value="bundesliga">Bundesliga</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="nation">Нация:</label>
+                        <select id="nation" name="nation">
+                            <option value="">Любая</option>
+                            <option value="bra">Бразилия</option>
+                            <option value="fra">Франция</option>
+                            <option value="arg">Аргентина</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary full-width">Применить</button>
+                </aside>
+
+                <div class="player-grid-container">
+                    <h2>Весь рынок</h2>
+                    <div class="player-grid">
+                        {% for listing in listings %}
+                        <div class="player-card">
+                            <div class="card-header">
+                                <span class="player-rating">{{ listing.player.overall_rating }}</span>
+                                <span class="player-position">{{ listing.player.position }}</span>
+                                <img src="{% if listing.player.player_flag_image %}{{ listing.player.player_flag_image.url }}{% else %}{{ listing.player.nation.flag_image_url|default:'/static/images/default_flag.png' }}{% endif %}"
+                                    alt="{{ listing.player.nation.name }} Flag" class="player-flag">
+                                <img src="{% if listing.player.player_club_logo_image %}{{ listing.player.player_club_logo_image.url }}{% else %}{{ listing.player.club.logo_url|default:'/static/images/default_logo.png' }}{% endif %}"
+                                    alt="{{ listing.player.club.name }} Logo" class="player-club">
+                            </div>
+                            <img src="{% if listing.player.image_file %}{{ listing.player.image_file.url }}{% else %}{{ listing.player.image_url|default:'/static/images/default_player.png' }}{% endif %}"
+                                alt="{{ listing.player.name }}" class="player-photo">
+                            <h3 class="player-name">{{ listing.player.name }}</h3>
+                            <div class="player-stats">
+                                <ul>
+                                    <li><strong>{{ listing.player.stats.pace }}</strong> PAC</li>
+                                    <li><strong>{{ listing.player.stats.shooting }}</strong> SHO</li>
+                                    <li><strong>{{ listing.player.stats.passing }}</strong> PAS</li>
+                                    <li><strong>{{ listing.player.stats.dribbling }}</strong> DRI</li>
+                                    <li><strong>{{ listing.player.stats.defending }}</strong> DEF</li>
+                                    <li><strong>{{ listing.player.stats.physicality }}</strong> PHY</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <span class="price">{{ listing.current_price }}</span>
+                                <a href="{% url 'buy_player' listing.id %}" class="btn btn-buy">Купить</a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        
+                        <div class="player-card">
+                            <div class="card-header">
+                                <span class="player-rating">89</span>
+                                <span class="player-position">CAM</span>
+                                <img src="{% static 'css/images/Flag_of_Belgium.png' %}" alt="Belgium Flag"
+                                    class="player-flag">
+                                <img src="{% static 'css/images/Napoli_logo.png' %}" alt="Napoli Logo" class="player-club">
+                            </div>
+                            <img src="{% static 'css/images/Kevin_photo.png' %}" alt="Kevin De Bruyne" class="player-photo">
+                            <h3 class="player-name">DE BRUYNE</h3>
+                            <div class="player-stats">
+                                <ul>
+                                    <li><strong>75</strong> PAC</li>
+                                    <li><strong>88</strong> SHO</li>
+                                    <li><strong>94</strong> PAS</li>
+                                    <li><strong>87</strong> DRI</li>
+                                    <li><strong>65</strong> DEF</li>
+                                    <li><strong>78</strong> PHY</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <span class="price">450,000</span>
+                                
+                            </div>
+                        </div>
+                        <div class="player-card">
+                            <div class="card-header">
+                                <span class="player-rating">88</span>
+                                <span class="player-position">CB</span>
+                                <img src="{% static 'css/images/Netherlands_Navy.png' %}" alt="Netherlands Flag"
+                                    class="player-flag">
+                                <img src="{% static 'css/images/liverpool-logo.png' %}" alt="Liverpool Logo"
+                                    class="player-club">
+                            </div>
+                            <img src="{% static 'css/images/Virgil_photo.png' %}" alt="Virgil van Dijk"
+                                class="player-photo">
+                            <h3 class="player-name">VAN DIJK</h3>
+                            <div class="player-stats">
+                                <ul>
+                                    <li><strong>80</strong> PAC</li>
+                                    <li><strong>67</strong> SHO</li>
+                                    <li><strong>82</strong> PAS</li>
+                                    <li><strong>75</strong> DRI</li>
+                                    <li><strong>91</strong> DEF</li>
+                                    <li><strong>86</strong> PHY</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <span class="price">600,000</span>
+                                
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}

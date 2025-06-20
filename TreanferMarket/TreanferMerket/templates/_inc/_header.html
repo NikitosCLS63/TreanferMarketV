@@ -1,0 +1,28 @@
+{% load static %}
+<header class="main-header">
+    <div class="container">
+        <a href="{% url 'info_view' %}" class="logo">ТРАНСФЕР <strong>МАРКЕТ</strong></a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{% url 'market_view' %}" class="{% if request.resolver_match.view_name == 'market_view' %}active{% endif %}">Рынок</a></li>
+                <li><a href="{% url 'my_club' %}" class="{% if request.resolver_match.view_name == 'my_club' %}active{% endif %}">Мой клуб</a></li>
+                <li><a href="{% url 'create_player' %}" class="{% if request.resolver_match.view_name == 'create_player' %}active{% endif %}">Создать свою карточку</a></li>
+                
+            </ul>
+        </nav>
+        <div class="user-actions">
+            {% if user.is_authenticated %}
+                <span class="greeting">Привет, {{ user.username }}!</span>
+                <span class="user-coins">Монеты: <span id="userCoinsDisplay">{{ user.coins }}</span></span>
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">Выход</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-secondary">Вход</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+

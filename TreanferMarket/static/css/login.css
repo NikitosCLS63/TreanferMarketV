@@ -1,0 +1,161 @@
+:root {
+    --primary-color: #00ff87; /* Яркий, "игровой" зеленый */
+    --secondary-color: #7d5fff; /* Фиолетовый акцент */
+    --dark-bg: #0f0f0f;
+    --card-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --text-dark: #101010;
+    --gold-color: #ffd700;
+    --white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- Карточка формы --- */
+.form-container {
+    background: linear-gradient(145deg, var(--card-bg), #111);
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid #333;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.form-container:hover {
+    transform: translateY(-4px);
+}
+
+/* --- Заголовок --- */
+.form-container h2 {
+    font-size: 30px;
+    font-weight: 800;
+    margin-bottom: 25px;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* --- Форма --- */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    text-align: left;
+}
+
+form p {
+    margin-bottom: 10px;
+}
+
+form label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-color);
+    display: block;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    background-color: #292929;
+    border: 1px solid #444;
+    color: var(--text-color);
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.3s ease;
+}
+
+form input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* --- Кнопка входа (адаптировано из btn-primary) --- */
+.btn-secondary { /* Используется для кнопки входа в login.html */
+    padding: 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    border: none; /* Убираем границу, так как btn-primary ее не имеет */
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--white);
+    color: var(--secondary-color);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* Пространство для иконки переключения */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-color);
+    user-select: none;
+    transition: color 0.3s;
+}
+
+.toggle-password:hover {
+    color: var(--primary-color);
+}
+
+.error {
+    color: red;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.back-button {
+    display: inline-block;
+    margin-top: 15px; /* Добавляем отступ сверху, если он не был явно указан */
+    font-size: 14px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    position: relative;
+    left: -10px; /* Если нужно смещение, иначе 0 */
+}
+
+.back-button:hover {
+    color: var(--gold-color);
+} 
